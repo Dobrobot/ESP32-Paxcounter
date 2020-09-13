@@ -53,6 +53,7 @@ uint16_t mac_add(uint8_t *paddr, int8_t rssi, bool sniff_type) {
   bool added = false;
   int8_t beaconID; // beacon number in test monitor mode
   uint32_t *mac;   // temporary buffer for shortened MAC
+  printf("MAC:%02x:%02x:%02x:%02x:%02x:%02x\n", paddr[0],paddr[1],paddr[2],paddr[3],paddr[4],paddr[5]);
 
   // only last 3 MAC Address bytes are used for MAC address anonymization
   // but since it's uint32 we take 4 bytes to avoid 1st value to be 0.

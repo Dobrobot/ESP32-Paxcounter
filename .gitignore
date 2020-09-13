@@ -12,3 +12,4 @@
 .gcc-flags.json
 src/loraconf.h
 src/ota.conf
+monitor.log

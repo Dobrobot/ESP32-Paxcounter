@@ -116,7 +116,7 @@ void sendData() {
       if (cfg.countermode != 1) {
         reset_counters(); // clear macs container and reset all counters
         get_salt();       // get new salt for salting hashes
-        ESP_LOGI(TAG, "Counter cleared");
+        ESP_LOGI(TAG, "Counter cleared (mode=%i)", cfg.countermode);
       }
 #ifdef HAS_DISPLAY
       else
