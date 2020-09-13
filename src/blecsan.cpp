@@ -116,7 +116,6 @@ IRAM_ATTR void gap_callback_handler(esp_gap_ble_cb_event_t event,
                                     esp_ble_gap_cb_param_t *param) {
 
   esp_ble_gap_cb_param_t *p = (esp_ble_gap_cb_param_t *)param;
-  uint16_t hashedmac = 0;
 
   ESP_LOGV(TAG, "BT payload rcvd -> type: 0x%.2x -> %s", *p->scan_rst.ble_adv,
            btsig_gap_type(*p->scan_rst.ble_adv));
@@ -162,7 +161,11 @@ IRAM_ATTR void gap_callback_handler(esp_gap_ble_cb_event_t event,
 
       // hash and add this device and show new count total if it was not
       // previously added
-      hashedmac =
+
+#if (COUNT_ENS)
+      uint16_t hashedmac =
+#endif
+
           mac_add((uint8_t *)p->scan_rst.bda, p->scan_rst.rssi, MAC_SNIFF_BLE);
 
 #if (COUNT_ENS)
@@ -247,10 +250,9 @@ void start_BLEscan(void) {
 #if (BLECOUNTER)
   ESP_LOGI(TAG, "Initializing bluetooth scanner ...");
 
-  ESP_ERROR_CHECK(esp_coex_preference_set(
-      ESP_COEX_PREFER_BALANCE)); // configure Wifi/BT coexist lib
-
   // Initialize BT controller to allocate task and other resource.
+  ESP_ERROR_CHECK(esp_coex_preference_set(ESP_COEX_PREFER_BT));
+
   btStart();
   ESP_ERROR_CHECK(esp_bluedroid_init());
   ESP_ERROR_CHECK(esp_bluedroid_enable());
@@ -269,8 +271,7 @@ void stop_BLEscan(void) {
   ESP_ERROR_CHECK(esp_bluedroid_disable());
   ESP_ERROR_CHECK(esp_bluedroid_deinit());
   btStop(); // disable bt_controller
-  ESP_ERROR_CHECK(esp_coex_preference_set(
-      ESP_COEX_PREFER_WIFI)); // configure Wifi/BT coexist lib
+  ESP_ERROR_CHECK(esp_coex_preference_set(ESP_COEX_PREFER_WIFI));
   ESP_LOGI(TAG, "Bluetooth scanner stopped");
 #endif // BLECOUNTER
 } // stop_BLEscan
